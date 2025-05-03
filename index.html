@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Case Reporting Form</title>
-    <link rel="icon" type="image/png" href="https://media-exp1.licdn.com/dms/image/C4E0BAQHCgkEymt1qLw/company-logo_200_200/0/1593124750021?e=2147483647&v=beta&t=QSoVJmJS8oaX-Nt03hsMtiyawCTlqP1alUt1GNq7DnA">
-    <script src="<img src="https://media-exp1.licdn.com/dms/image/C4E0BAQHCgkEymt1qLw/company-logo_200_200/0/1593124750021?e=2147483647&v=beta&t=QSoVJmJS8oaX-Nt03hsMtiyawCTlqP1alUt1GNq7DnA"></script>
-     <style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
         body {
             background-image: url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
             background-size: cover;
@@ -38,17 +37,11 @@
         .form-container {
             animation: fadeIn 0.5s ease-out;
         }
-        .logo {
-            max-width: 150px;
-            height: auto;
-            margin-bottom: 1rem;
-        }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center bg-gray-100">
-    <div class="form-container max-w-lg w-full mx-4 p-8 text-center">
-        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Kaldis CNET Logo" class="logo mx-auto">
-        <h2 class="text-2xl font-bold text-gray-800 mb-6">Case Reporting Form</h2>
+    <div class="form-container max-w-lg w-full mx-4 p-8">
+        <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Case Reporting Form</h2>
         <form id="caseForm" enctype="multipart/form-data" class="space-y-6">
             <div>
                 <label for="department" class="block text-sm font-medium text-gray-700">Department</label>
@@ -92,14 +85,16 @@
         document.getElementById('caseForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const status = document.getElementById('status');
-            const submitButton = this.querySelector('button[type="submit"]');
-            submitButton.disabled = true; // Disable button to prevent multiple submissions
             status.textContent = 'Submitting...';
             status.className = 'mt-4 text-center text-sm text-gray-600';
 
-            const formData = new FormData(this);
+            const form = this;
+            const formData = new FormData(form);
+            const attachment = document.getElementById('attachment').files[0];
+
+            // Dynamically adjust submission based on file presence
             try {
-                const response = await fetch('https://script.google.com/macros/s/AKfycby8ZdTYxQAcNE1a7K57ZGnP6U2stHq5z24meRoAXlFQJZCjkhi-zHVSdvHbZVtmLVQ6/exec', {
+                const response = await fetch('https://script.google.com/macros/s/AKfycby2uS4YGWk7xF4TAEbxHUbfWj2BkNyQkHFCyyyEa3-9OOFtQVg3loOsXNgipN4zJHCe/exec', {
                     method: 'POST',
                     body: formData
                 });
@@ -107,7 +102,7 @@
                 if (result.status === 'success') {
                     status.textContent = 'Submission successful!';
                     status.className = 'mt-4 text-center text-sm text-green-600';
-                    this.reset();
+                    form.reset();
                 } else {
                     status.textContent = 'Error: ' + result.message;
                     status.className = 'mt-4 text-center text-sm text-red-600';
@@ -115,8 +110,7 @@
             } catch (error) {
                 status.textContent = 'Error submitting form. Please try again.';
                 status.className = 'mt-4 text-center text-sm text-red-600';
-            } finally {
-                submitButton.disabled = false; // Re-enable button after request
+                Logger.log('Fetch error: ' + error.toString());
             }
         });
     </script>
